@@ -5,12 +5,13 @@
 
 #include "SparseMatrix.h"
 #include <vector>
+#include <iostream>
 
 template<typename T>
 class CSRMatrix : public SparseMatrix<T> {
 private:
     std::vector<T> values;
-    std::vector<int> colIndices;
+    std::vector<int> columns;
     std::vector<int> row_idx;
 
 public:
@@ -21,7 +22,8 @@ public:
     T& operator()(int row, int col) override;
     std::vector<T> operator*(const std::vector<T>& vec) const override;
 
-    std::string toString() const override;
+    template <typename U>
+    friend std::ostream& operator<<(std::ostream& os, const CSRMatrix<U>& matrix);
 
     void addValue(int row, int col, T value);
 };

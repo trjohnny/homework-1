@@ -33,8 +33,6 @@ public:
     virtual T operator()(int row, int col) const = 0;
     virtual std::vector<double> operator*(const std::vector<double>& vec) const = 0;
 
-    virtual std::string toString() const = 0;
-
     virtual ~SparseMatrix() = default;
 
 protected:

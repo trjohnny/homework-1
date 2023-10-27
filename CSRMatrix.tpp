@@ -24,17 +24,17 @@ void CSRMatrix<T>::addValue(int row, int col, T value) {
 
     // Find the position in row_idx where the new value's column index should be inserted
     int insertPos = row_idx[row];
-    while (insertPos < row_idx[row + 1] && colIndices[insertPos] < col) {
+    while (insertPos < row_idx[row + 1] && columns[insertPos] < col) {
         ++insertPos;
     }
 
     // Check if the value already exists at the (row, col) position
-    if (insertPos < row_idx[row + 1] && colIndices[insertPos] == col) {
+    if (insertPos < row_idx[row + 1] && columns[insertPos] == col) {
         values[insertPos] = value;
     } else {
         // Insert the new value
         values.insert(values.begin() + insertPos, value);
-        colIndices.insert(colIndices.begin() + insertPos, col);
+        columns.insert(columns.begin() + insertPos, col);
 
         // Update row_idx and all subsequent rows
         for (int i = row + 1; i < row_idx.size(); ++i) {
@@ -57,9 +57,9 @@ T CSRMatrix<T>::operator()(int row, int col) const {
     auto start = row_idx[row];
     auto end = row_idx[row + 1];
 
-    auto it = std::lower_bound(colIndices.begin() + start, colIndices.begin() + end, col);
-    if (it != colIndices.end() && *it == col) {
-        auto index = std::distance(colIndices.begin(), it);
+    auto it = std::lower_bound(columns.begin() + start, columns.begin() + end, col);
+    if (it != columns.end() && *it == col) {
+        auto index = std::distance(columns.begin(), it);
         return values[index];
     }
     return T();  // Return a default constructed object of type T
@@ -70,14 +70,14 @@ T& CSRMatrix<T>::operator()(int row, int col) {
     assert(row >= 0 && row < this->rows && col >= 0 && col < this->cols);
     auto start = row_idx[row];
     auto end = row_idx[row + 1];
-    auto it = lower_bound(colIndices.begin() + start, colIndices.begin() + end, col);
+    auto it = lower_bound(columns.begin() + start, columns.begin() + end, col);
 
-    if (it == colIndices.begin() + end || *it != col) {
+    if (it == columns.begin() + end || *it != col) {
         addValue(row, col, 0);
         it++;
     }
 
-    return values[start + (it - colIndices.begin())];
+    return values[start + (it - columns.begin())];
 }
 
 template<typename T>
@@ -90,7 +90,7 @@ std::vector<T> CSRMatrix<T>::operator*(const std::vector<T>& vec) const {
 
     for (int row = 0; row < this->getRows(); ++row) {
         for (int idx = row_idx[row]; idx < row_idx[row + 1]; ++idx) {
-            result[row] += values[idx] * vec[colIndices[idx]];
+            result[row] += values[idx] * vec[columns[idx]];
         }
     }
 
@@ -100,9 +100,9 @@ std::vector<T> CSRMatrix<T>::operator*(const std::vector<T>& vec) const {
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const CSRMatrix<T>& matrix) {
     for (int i = 0; i < matrix.getRows(); ++i) {
-        int valIndex = matrix.rowPointers[i];
+        int valIndex = matrix.row_idx[i];
         for (int j = 0; j < matrix.getColumns(); ++j) {
-            if (valIndex < matrix.rowPointers[i + 1] && j == matrix.colIndices[valIndex]) {
+            if (valIndex < matrix.row_idx[i + 1] && j == matrix.columns[valIndex]) {
                 os << matrix.values[valIndex] << " ";
                 ++valIndex;
             } else {
@@ -114,5 +114,6 @@ std::ostream& operator<<(std::ostream& os, const CSRMatrix<T>& matrix) {
     return os;
 }
 
+template std::ostream& operator<<(std::ostream& os, const CSRMatrix<double>& matrix);
 
 #endif //HOMEWORK_1_CSRMATRIX_TPP

@@ -1,4 +1,5 @@
 #include "CSRMatrix.h"
+#include "CSRMatrix.tpp"
 
 int main() {
     try {
