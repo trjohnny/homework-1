@@ -49,7 +49,7 @@ int CSRMatrix<T>::getNonZeros() const {
 }
 
 template<typename T>
-T CSRMatrix<T>::operator()(int row, int col) const {
+T CSRMatrix<T>::getElement(int row, int col) const {
     if (row < 0 || row >= this->rows || col < 0 || col >= this->cols) {
         throw std::out_of_range("Index out of bounds");
     }
@@ -58,7 +58,7 @@ T CSRMatrix<T>::operator()(int row, int col) const {
     auto end = row_idx[row + 1];
 
     auto it = std::lower_bound(columns.begin() + start, columns.begin() + end, col);
-    if (it != columns.end() && *it == col) {
+    if (it != columns.begin() + end && *it == col) {
         auto index = std::distance(columns.begin(), it);
         return values[index];
     }
@@ -66,18 +66,20 @@ T CSRMatrix<T>::operator()(int row, int col) const {
 }
 
 template<typename T>
-T& CSRMatrix<T>::operator()(int row, int col) {
-    assert(row >= 0 && row < this->rows && col >= 0 && col < this->cols);
+void CSRMatrix<T>::setElement(int row, int col, const T& value) {
+    if (row < 0 || row >= this->rows || col < 0 || col >= this->cols) {
+        throw std::out_of_range("Index out of bounds");
+    }
     auto start = row_idx[row];
     auto end = row_idx[row + 1];
     auto it = lower_bound(columns.begin() + start, columns.begin() + end, col);
 
     if (it == columns.begin() + end || *it != col) {
-        addValue(row, col, 0);
-        it++;
+        addValue(row, col, value);
+        return;
     }
 
-    return values[start + (it - columns.begin())];
+    values[it - columns.begin()] = value;
 }
 
 template<typename T>
