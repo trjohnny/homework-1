@@ -28,6 +28,6 @@ public:
     void addValue(int row, int col, T value);
 };
 
-#include "CSRMatrix.tpp"  // Include the template implementation
+#include "CSRMatrix.tpp"
 
 #endif // CSR_MATRIX_H

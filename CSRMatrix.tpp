@@ -20,23 +20,19 @@ void CSRMatrix<T>::addValue(int row, int col, T value) {
         throw std::out_of_range("Indices are out of range");
     }
 
-    if (value == static_cast<T>(0)) return;  // Ignore zero values
+    if (value == static_cast<T>(0)) return;
 
-    // Find the position in row_idx where the new value's column index should be inserted
     int insertPos = row_idx[row];
     while (insertPos < row_idx[row + 1] && columns[insertPos] < col) {
         ++insertPos;
     }
 
-    // Check if the value already exists at the (row, col) position
     if (insertPos < row_idx[row + 1] && columns[insertPos] == col) {
         values[insertPos] = value;
     } else {
-        // Insert the new value
         values.insert(values.begin() + insertPos, value);
         columns.insert(columns.begin() + insertPos, col);
 
-        // Update row_idx and all subsequent rows
         for (int i = row + 1; i < row_idx.size(); ++i) {
             row_idx[i]++;
         }
@@ -62,7 +58,7 @@ T CSRMatrix<T>::getElement(int row, int col) const {
         auto index = std::distance(columns.begin(), it);
         return values[index];
     }
-    return T();  // Return a default constructed object of type T
+    return T();
 }
 
 template<typename T>
