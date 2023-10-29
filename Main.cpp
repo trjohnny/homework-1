@@ -2,40 +2,54 @@
 #include "CSRMatrix.tpp"
 
 int main() {
-    try {
-        CSRMatrix<double> matrix(4, 5);
+    CSRMatrix<double> matrix(3, 3);
 
-        // Adding some values
-        matrix.addValue(0, 1, 10.5);
-        matrix.addValue(1, 3, 5.0);
-        matrix.addValue(2, 0, 3.2);
-        matrix.addValue(2, 4, 1.0);
-        matrix.addValue(3, 2, 8.5);
+    // Test case 2: Get the number of rows and columns
+    int numRows = matrix.getRows();
+    int numCols = matrix.getColumns();
+    std::cout << "Number of rows: " << numRows << ", Number of columns: " << numCols << std::endl;
 
-        // Testing operator()
-        std::cout << "Value at (0, 1): " << matrix(0, 1) << std::endl; // Should print 10.5
-        std::cout << "Value at (2, 4): " << matrix(2, 4) << std::endl; // Should print 1.0
-        std::cout << "Value at (1, 1): " << matrix(1, 1) << std::endl; // Should print 0
+    // Test case 3: Set and get elements
+    matrix(0, 0) = 1.0;
+    matrix(1, 1) = 2.0;
+    matrix(2, 2) = 3.0;
 
-        // Testing matrix-vector multiplication
-        std::vector<double> vec = {1, 2, 3, 4, 5};
-        std::vector<double> result = matrix * vec;
-        std::cout << "Matrix-vector product: ";
-        for (auto val : result) {
-            std::cout << val << " ";
+    std::cout << "Matrix(0, 0) = " << matrix(0, 0) << std::endl;
+    std::cout << "Matrix(1, 1) = " << matrix(1, 1) << std::endl;
+    std::cout << "Matrix(2, 2) = " << matrix(2, 2) << std::endl;
+    std::cout << "Matrix(1, 2) = " << matrix(1, 2) << std::endl;
+
+    // Test case 4: Matrix-vector product
+    std::vector<double> vec = {1.0, 2.0, 3.0};
+    std::vector<double> result = matrix * vec;
+
+    std::cout << "Matrix-Vector Product: ";
+    for (double v : result) {
+        std::cout << v << " ";
+    }
+    std::cout << std::endl;
+
+    // Test case 5: Print the matrix
+    std::cout << "Matrix Contents:" << std::endl;
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
+            std::cout << matrix(i, j) << " ";
         }
-        std::cout << std::endl; // Should print "0 0 3.2 25.5 0 "
+        std::cout << std::endl;
+    }
 
-        // Testing operator<<
-        std::cout << "Matrix representation:" << std::endl;
-        std::cout << matrix;
-        // Should print something like:
-        // 0 10.5 0 0 0
-        // 0 0 0 5 0
-        // 3.2 0 0 0 1
-        // 0 0 8.5 0 0
-    } catch (const std::exception& e) {
-        std::cerr << "An error occurred: " << e.what() << std::endl;
+    // Test case 6: Access an out-of-bound element
+    try {
+        double invalidValue = matrix(5, 5);
+    } catch (const std::out_of_range& e) {
+        std::cerr << "Out of range error: " << e.what() << std::endl;
+    }
+
+    // Test case 7: Set an out-of-bound element
+    try {
+        matrix(5, 5) = 5.5;
+    } catch (const std::out_of_range& e) {
+        std::cerr << "Out of range error: " << e.what() << std::endl;
     }
 
     return 0;
