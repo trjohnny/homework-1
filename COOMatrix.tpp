@@ -10,8 +10,12 @@
 #include <stdexcept>
 
 template<typename T>
-COOMatrix<T>::COOMatrix(int numRows, int numCols)
-        : SparseMatrix<T>(numRows, numCols) {}
+COOMatrix<T>::COOMatrix(int numRows, int numCols) : SparseMatrix<T>(numRows, numCols) {}
+
+template<typename T>
+COOMatrix<T>::COOMatrix(const SparseMatrix<T>& matrix) : COOMatrix<T>(matrix.getRows(), matrix.getCols()) {
+    SparseMatrix<T>::copyFrom(matrix);
+}
 
 template<typename T>
 int COOMatrix<T>::getNonZeros() const {
@@ -33,7 +37,7 @@ T COOMatrix<T>::getElement(int row, int col) const {
 }
 
 template<typename T>
-void COOMatrix<T>::setElement(int row, int col, const T& value) {
+void COOMatrix<T>::setElement(int row, int col, T value) {
     if (row < 0 || row >= this->numRows || col < 0 || col >= this->numCols) {
         throw std::out_of_range("Index out of bounds");
     }

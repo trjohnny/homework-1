@@ -35,6 +35,15 @@ public:
         int row, col;
     };
 
+    void copyFrom(const SparseMatrix<T>& mat) {
+        for (int i = 0; i < mat.getRows(); ++i) {
+            for (int j = 0; j < mat.numCols; ++j) {
+                if (mat.getElement(i, j) != T()) {
+                    addValue(i, j, mat.getElement(i, j));
+                }
+            }
+        }
+    }
 
     SparseMatrix(int rows, int cols) : numRows(rows), numCols(cols) {}
 
@@ -49,7 +58,8 @@ public:
     virtual int getNonZeros() const = 0;
 
     virtual T getElement(int row, int col) const = 0;
-    virtual void setElement(int row, int col, const T& value) = 0;
+    virtual void setElement(int row, int col, T value) = 0;
+
     ProxyElement operator()(int row, int col) {
         return ProxyElement(*this, row, col);
     }
@@ -62,6 +72,8 @@ protected:
 
     const int numRows;
     const int numCols;
+
+    virtual void addValue(int row, int col, T value) = 0;
 
 };
 

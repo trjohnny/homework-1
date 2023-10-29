@@ -15,6 +15,11 @@ CSRMatrix<T>::CSRMatrix(int rows, int cols) : SparseMatrix<T>(rows, cols) {
 }
 
 template<typename T>
+CSRMatrix<T>::CSRMatrix(const SparseMatrix<T>& matrix) : CSRMatrix<T>(matrix.getRows(), matrix.getCols()) {
+    SparseMatrix<T>::copyFrom(matrix);
+}
+
+template<typename T>
 void CSRMatrix<T>::addValue(int row, int col, T value) {
     if (row < 0 || row >= this->numRows || col < 0 || col >= this->numCols) {
         throw std::out_of_range("Indices are out of range");
@@ -62,7 +67,7 @@ T CSRMatrix<T>::getElement(int row, int col) const {
 }
 
 template<typename T>
-void CSRMatrix<T>::setElement(int row, int col, const T& value) {
+void CSRMatrix<T>::setElement(int row, int col, T value) {
     if (row < 0 || row >= this->numRows || col < 0 || col >= this->numCols) {
         throw std::out_of_range("Index out of bounds");
     }
