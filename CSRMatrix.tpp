@@ -16,7 +16,7 @@ CSRMatrix<T>::CSRMatrix(int rows, int cols) : SparseMatrix<T>(rows, cols) {
 
 template<typename T>
 void CSRMatrix<T>::addValue(int row, int col, T value) {
-    if (row < 0 || row >= this->rows || col < 0 || col >= this->cols) {
+    if (row < 0 || row >= this->numRows || col < 0 || col >= this->numCols) {
         throw std::out_of_range("Indices are out of range");
     }
 
@@ -50,7 +50,7 @@ int CSRMatrix<T>::getNonZeros() const {
 
 template<typename T>
 T CSRMatrix<T>::getElement(int row, int col) const {
-    if (row < 0 || row >= this->rows || col < 0 || col >= this->cols) {
+    if (row < 0 || row >= this->numRows || col < 0 || col >= this->numCols) {
         throw std::out_of_range("Index out of bounds");
     }
 
@@ -67,7 +67,7 @@ T CSRMatrix<T>::getElement(int row, int col) const {
 
 template<typename T>
 void CSRMatrix<T>::setElement(int row, int col, const T& value) {
-    if (row < 0 || row >= this->rows || col < 0 || col >= this->cols) {
+    if (row < 0 || row >= this->numRows || col < 0 || col >= this->numCols) {
         throw std::out_of_range("Index out of bounds");
     }
     auto start = row_idx[row];
@@ -84,7 +84,7 @@ void CSRMatrix<T>::setElement(int row, int col, const T& value) {
 
 template<typename T>
 std::vector<T> CSRMatrix<T>::operator*(const std::vector<T>& vec) const {
-    if (vec.size() != this->getColumns()) {
+    if (vec.size() != this->getCols()) {
         throw std::invalid_argument("Vector size must be equal to the number of matrix columns");
     }
 
@@ -103,7 +103,7 @@ template<typename T>
 std::ostream& operator<<(std::ostream& os, const CSRMatrix<T>& matrix) {
     for (int i = 0; i < matrix.getRows(); ++i) {
         int valIndex = matrix.row_idx[i];
-        for (int j = 0; j < matrix.getColumns(); ++j) {
+        for (int j = 0; j < matrix.getCols(); ++j) {
             if (valIndex < matrix.row_idx[i + 1] && j == matrix.columns[valIndex]) {
                 os << matrix.values[valIndex] << " ";
                 ++valIndex;
@@ -115,7 +115,5 @@ std::ostream& operator<<(std::ostream& os, const CSRMatrix<T>& matrix) {
     }
     return os;
 }
-
-template std::ostream& operator<<(std::ostream& os, const CSRMatrix<double>& matrix);
 
 #endif //HOMEWORK_1_CSRMATRIX_TPP

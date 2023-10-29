@@ -36,14 +36,14 @@ public:
     };
 
 
-    SparseMatrix(int rows, int cols) : rows(rows), cols(cols) {}
+    SparseMatrix(int rows, int cols) : numRows(rows), numCols(cols) {}
 
     int getRows() const {
-        return rows;
+        return numRows;
     }
 
-    int getColumns() const {
-        return cols;
+    int getCols() const {
+        return numCols;
     }
 
     virtual int getNonZeros() const = 0;
@@ -54,14 +54,14 @@ public:
         return ProxyElement(*this, row, col);
     }
 
-    virtual std::vector<double> operator*(const std::vector<double>& vec) const = 0;
+    virtual std::vector<T> operator*(const std::vector<T>& vec) const = 0;
 
     virtual ~SparseMatrix() = default;
 
 protected:
 
-    const int rows;
-    const int cols;
+    const int numRows;
+    const int numCols;
 
 };
 
