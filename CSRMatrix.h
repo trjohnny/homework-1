@@ -18,10 +18,18 @@ private:
     void removeValue(int row, int col) override;
 
 public:
-    CSRMatrix(int rows, int cols);
-    explicit CSRMatrix(const SparseMatrix<T>& matrix);
 
-    int getNonZeros() const override;
+    CSRMatrix(int rows, int cols) : SparseMatrix<T>(rows, cols) {
+        row_idx.resize(rows + 1, 0);
+    }
+
+    CSRMatrix(const SparseMatrix<T>& matrix) : CSRMatrix<T>(matrix.getRows(), matrix.getCols()) {
+        SparseMatrix<T>::copyFrom(matrix);
+    }
+
+    int getNonZeros() const override {
+        return values.size();
+    };
     T getElement(int row, int col) const override;
     void setElement(int row, int col, T value) override;
     std::vector<T> operator*(const std::vector<T>& vec) const override;

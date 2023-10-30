@@ -9,18 +9,6 @@
 #include <algorithm>
 #include <stdexcept>
 
-template<typename T>
-COOMatrix<T>::COOMatrix(int numRows, int numCols) : SparseMatrix<T>(numRows, numCols) {}
-
-template<typename T>
-COOMatrix<T>::COOMatrix(const SparseMatrix<T>& matrix) : COOMatrix<T>(matrix.getRows(), matrix.getCols()) {
-    SparseMatrix<T>::copyFrom(matrix);
-}
-
-template<typename T>
-int COOMatrix<T>::getNonZeros() const {
-    return values.size();
-}
 
 template<typename T>
 T COOMatrix<T>::getElement(int row, int col) const {
@@ -44,11 +32,14 @@ void COOMatrix<T>::setElement(int row, int col, T value) {
 
     for (size_t i = 0; i < values.size(); ++i) {
         if (rows[i] == row && cols[i] == col) {
+            // if the new value is 0 (T() returns 0 or 0.0 depending on the type) we should remove it
             if (value == T()) this->removeValue(row, col);
             else values[i] = value;
             return;
         }
     }
+
+    // element is not available, we should create it.
     addValue(row, col, value);
 }
 

@@ -13,10 +13,13 @@
 template<typename T>
 class SparseMatrix {
 
+    // This line checks if T is an arithmetic type (int, float, double...)
     static_assert(std::is_arithmetic_v<T>, "SparseMatrix can only be instantiated with arithmetic types");
 
 public:
 
+    // The proxy class wraps the elements in the matrix so that SparseMatrix(x,y) = element (setter)
+    // and SparseMatrix(x,y) (getter) can behave differently
     class ProxyElement {
     public:
         ProxyElement(SparseMatrix& matrix, int row, int col) : matrix(matrix), row(row), col(col) {}
@@ -45,45 +48,31 @@ public:
         return numCols;
     }
 
-    virtual int getNonZeros() const = 0;
 
+    virtual int getNonZeros() const = 0;
     virtual T getElement(int row, int col) const = 0;
     virtual void setElement(int row, int col, T value) = 0;
+    bool equals(const SparseMatrix<T>& matrix) const;
 
-    bool equals(const SparseMatrix<T>& matrix) {
-        for (int i = 0; i < matrix.getRows(); ++i) {
-            for (int j = 0; j < matrix.numCols; ++j) {
-                if (matrix.getElement(i, j) != this->getElement(i, j)) return false;
-            }
-        }
-        return true;
-    }
-
+    // When SparseMatrix(row, col) is called, a Proxy element is returned
+    // but the getter and setter operations are implemented in the Proxy class
     ProxyElement operator()(int row, int col) {
         return ProxyElement(*this, row, col);
     }
 
     virtual std::vector<T> operator*(const std::vector<T>& vec) const = 0;
 
-    virtual ~SparseMatrix() = default;
-
 protected:
 
     const int numRows;
     const int numCols;
 
+    // addValue physically inserts an element when it's not available in the SparseMatrix.
+    // This is a helper function which is not available to the user who can just modify pre-existing elements.
     virtual void addValue(int row, int col, T value) = 0;
     virtual void removeValue(int row, int col) = 0;
 
-    void copyFrom(const SparseMatrix<T>& mat) {
-        for (int i = 0; i < mat.getRows(); ++i) {
-            for (int j = 0; j < mat.numCols; ++j) {
-                if (mat.getElement(i, j) != T()) {
-                    addValue(i, j, mat.getElement(i, j));
-                }
-            }
-        }
-    }
+    void copyFrom(const SparseMatrix<T>& mat);
 
 };
 
