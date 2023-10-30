@@ -35,16 +35,6 @@ public:
         int row, col;
     };
 
-    void copyFrom(const SparseMatrix<T>& mat) {
-        for (int i = 0; i < mat.getRows(); ++i) {
-            for (int j = 0; j < mat.numCols; ++j) {
-                if (mat.getElement(i, j) != T()) {
-                    addValue(i, j, mat.getElement(i, j));
-                }
-            }
-        }
-    }
-
     SparseMatrix(int rows, int cols) : numRows(rows), numCols(cols) {}
 
     int getRows() const {
@@ -60,6 +50,15 @@ public:
     virtual T getElement(int row, int col) const = 0;
     virtual void setElement(int row, int col, T value) = 0;
 
+    bool equals(const SparseMatrix<T>& matrix) {
+        for (int i = 0; i < matrix.getRows(); ++i) {
+            for (int j = 0; j < matrix.numCols; ++j) {
+                if (matrix.getElement(i, j) != this->getElement(i, j)) return false;
+            }
+        }
+        return true;
+    }
+
     ProxyElement operator()(int row, int col) {
         return ProxyElement(*this, row, col);
     }
@@ -74,6 +73,17 @@ protected:
     const int numCols;
 
     virtual void addValue(int row, int col, T value) = 0;
+    virtual void removeValue(int row, int col) = 0;
+
+    void copyFrom(const SparseMatrix<T>& mat) {
+        for (int i = 0; i < mat.getRows(); ++i) {
+            for (int j = 0; j < mat.numCols; ++j) {
+                if (mat.getElement(i, j) != T()) {
+                    addValue(i, j, mat.getElement(i, j));
+                }
+            }
+        }
+    }
 
 };
 

@@ -15,6 +15,7 @@ private:
     std::vector<int> row_idx;
 
     void addValue(int row, int col, T value) override;
+    void removeValue(int row, int col) override;
 
 public:
     CSRMatrix(int rows, int cols);

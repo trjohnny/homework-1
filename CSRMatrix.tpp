@@ -25,7 +25,7 @@ void CSRMatrix<T>::addValue(int row, int col, T value) {
         throw std::out_of_range("Indices are out of range");
     }
 
-    if (value == static_cast<T>(0)) return;
+    if (value == T()) return;
 
     int insertPos = row_idx[row];
     while (insertPos < row_idx[row + 1] && columns[insertPos] < col) {
@@ -40,6 +40,27 @@ void CSRMatrix<T>::addValue(int row, int col, T value) {
 
         for (int i = row + 1; i < row_idx.size(); ++i) {
             row_idx[i]++;
+        }
+    }
+}
+
+template<typename T>
+void CSRMatrix<T>::removeValue(int row, int col) {
+    if (row < 0 || row >= this->numRows || col < 0 || col >= this->numCols) {
+        throw std::out_of_range("Indices are out of range");
+    }
+
+    auto start = row_idx[row];
+    auto end = row_idx[row + 1];
+
+    auto it = std::lower_bound(columns.begin() + start, columns.begin() + end, col);
+    if (it != columns.begin() + end && *it == col) {
+        auto index = std::distance(columns.begin(), it);
+        values.erase(values.begin() + index);
+        columns.erase(columns.begin() + index);
+
+        for (int i = row + 1; i < row_idx.size(); ++i) {
+            row_idx[i]--;
         }
     }
 }

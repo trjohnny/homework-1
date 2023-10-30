@@ -1,21 +1,29 @@
 #include "CSRMatrix.h"
-#include "CSRMatrix.tpp"
 #include "COOMatrix.h"
-#include "COOMatrix.tpp"
 #include <iostream>
 #include <vector>
 #include <cassert>
-#include <functional>
-#include <typeinfo>
 
 void runTests(SparseMatrix<double>& matrix) {
 
     // Test 1: Set and get elements
+    assert(matrix.getNonZeros() == 0);
     matrix(0, 0) = 1.0;
+    assert(matrix.getNonZeros() == 1);
     matrix(1, 1) = 2.0;
+    assert(matrix.getNonZeros() == 2);
     matrix(1, 2) = 3.0;
+    assert(matrix.getNonZeros() == 3);
     matrix(2, 1) = 1.3;
+    assert(matrix.getNonZeros() == 4);
     matrix(1, 0) = 0.5;
+    assert(matrix.getNonZeros() == 5);
+    matrix(0, 1) = 0;
+    assert(matrix.getNonZeros() == 5);
+    matrix(2, 2) = 3.0;
+    assert(matrix.getNonZeros() == 6);
+    matrix(2, 2) = 0.0;
+    assert(matrix.getNonZeros() == 5);
 
     assert(matrix(0, 0) == 1.0 && "Set/Get element failed");
     assert(matrix(1, 1) == 2.0 && "Set/Get element failed");
@@ -39,8 +47,10 @@ void runTests(SparseMatrix<double>& matrix) {
         COOMatrix<double> coo_from_csr(matrix);
         CSRMatrix<double> csr_from_coo(coo_from_csr);
 
-        assert(coo_from_csr(0, 0) == matrix(0, 0) && "Conversion from CSR to COO failed at (0,0)");
-        assert(csr_from_coo(0, 0) == matrix(0, 0) && "Conversion from COO to CSR failed at (0,0)");
+        assert(coo_from_csr.equals(matrix) && "Conversion from CSR to COO failed");
+        assert(csr_from_coo.equals(coo_from_csr) && "Conversion from COO to CSR failed");
+        assert(matrix.equals(csr_from_coo) && "Conversion from COO to CSR failed");
+
         std::cout << " Test 3: Conversion between CSR and COO. PASSED!" << std::endl;
     }
 }
@@ -49,6 +59,10 @@ int main() {
     std::cout << "Testing CSRMatrix" << std::endl;
     CSRMatrix<double> csr(3, 3);
     runTests(csr);
+
+    std::cout << "Testing COOMatrix" << std::endl;
+    COOMatrix<double> coo(3, 3);
+    runTests(coo);
 
     return 0;
 }

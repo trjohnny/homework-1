@@ -15,6 +15,7 @@ private:
     std::vector<int> cols;
 
     void addValue(int row, int col, T value) override;
+    void removeValue(int row, int col) override;
 
 public:
     COOMatrix(int rows, int cols);

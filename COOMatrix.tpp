@@ -44,7 +44,8 @@ void COOMatrix<T>::setElement(int row, int col, T value) {
 
     for (size_t i = 0; i < values.size(); ++i) {
         if (rows[i] == row && cols[i] == col) {
-            values[i] = value;
+            if (value == T()) this->removeValue(row, col);
+            else values[i] = value;
             return;
         }
     }
@@ -76,9 +77,28 @@ void COOMatrix<T>::addValue(int row, int col, T value) {
     if (row < 0 || row >= this->getRows() || col < 0 || col >= this->getCols()) {
         throw std::out_of_range("Row or column index out of range");
     }
+    if (value == T()) return;
+
     values.push_back(value);
     rows.push_back(row);
     cols.push_back(col);
 }
+
+template<typename T>
+void COOMatrix<T>::removeValue(int row, int col) {
+    if (row < 0 || row >= this->numRows || col < 0 || col >= this->numCols) {
+        throw std::out_of_range("Indices are out of range");
+    }
+
+    for (size_t i = 0; i < rows.size(); ++i) {
+        if (rows[i] == row && cols[i] == col) {
+            rows.erase(rows.begin() + i);
+            cols.erase(cols.begin() + i);
+            values.erase(values.begin() + i);
+            return;
+        }
+    }
+}
+
 
 #endif //HOMEWORK_1_COOMATRIX_TPP
