@@ -76,5 +76,6 @@ protected:
 
 };
 
+#include "SparseMatrix.tpp"
 
 #endif //HOMEWORK_1_SPARSEMATRIX_H

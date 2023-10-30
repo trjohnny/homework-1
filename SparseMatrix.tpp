@@ -5,7 +5,6 @@
 #ifndef HOMEWORK_1_SPARSEMATRIX_TPP
 #define HOMEWORK_1_SPARSEMATRIX_TPP
 
-#include "SparseMatrix.h"
 #include <algorithm>
 #include <stdexcept>
 

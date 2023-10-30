@@ -42,7 +42,6 @@ void CSRMatrix<T>::removeValue(int row, int col) {
 
     auto start = row_idx[row];
     auto end = row_idx[row + 1];
-
     auto it = std::lower_bound(columns.begin() + start, columns.begin() + end, col);
     if (it != columns.begin() + end && *it == col) {
         auto index = std::distance(columns.begin(), it);
@@ -85,8 +84,10 @@ void CSRMatrix<T>::setElement(int row, int col, T value) {
         addValue(row, col, value);
         return;
     }
-
-    values[it - columns.begin()] = value;
+    else if(value == T())
+        this->removeValue(row, col);
+    else
+        values[it - columns.begin()] = value;
 }
 
 template<typename T>

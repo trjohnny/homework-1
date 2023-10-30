@@ -56,6 +56,8 @@ void runTests(SparseMatrix<double>& matrix) {
 }
 
 int main() {
+
+
     std::cout << "Testing CSRMatrix" << std::endl;
     CSRMatrix<double> csr(3, 3);
     runTests(csr);
@@ -63,6 +65,7 @@ int main() {
     std::cout << "Testing COOMatrix" << std::endl;
     COOMatrix<double> coo(3, 3);
     runTests(coo);
+
 
     return 0;
 }
